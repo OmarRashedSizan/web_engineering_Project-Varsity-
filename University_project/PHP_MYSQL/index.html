@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Entry Form</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="checkbox"],
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button[type="reset"] {
+            background-color: #6c757d;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Data Entry Form</h2>
+        <form action="process_form.php" method="post">
+            <div class="form-group">
+                <label for="name">Text Field:</label>
+                <input type="text" id="name" name="name">
+            </div>
+
+            <div class="form-group">
+                <label for="comments">Text Area:</label>
+                <textarea id="comments" name="comments" rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Check Boxes:</label><br>
+                <input type="checkbox" id="agree" name="agree" value="yes">
+                <label for="agree">I agree to the terms</label><br>
+            </div>
+
+            <div class="form-group">
+                <label>Multiple Checkboxes (Skills):</label><br>
+                <input type="checkbox" id="skill1" name="skills[]" value="Python">
+                <label for="skill1">Python</label><br>
+                <input type="checkbox" id="skill2" name="skills[]" value="SQL">
+                <label for="skill2">SQL</label><br>
+                <input type="checkbox" id="skill3" name="skills[]" value="R">
+                <label for="skill3">R</label><br>
+            </div>
+
+            <div class="form-group">
+                <label>Radio Buttons (Gender):</label><br>
+                <input type="radio" id="male" name="gender" value="male">
+                <label for="male">Male</label><br>
+                <input type="radio" id="female" name="gender" value="female">
+                <label for="female">Female</label><br>
+                <input type="radio" id="other" name="gender" value="other">
+                <label for="other">Other</label><br>
+            </div>
+
+            <div class="form-group">
+                <label for="occupation">List Box (Occupation):</label>
+                <select id="occupation" name="occupation">
+                    <option value="">Select...</option>
+                    <option value="student">Student</option>
+                    <option value="engineer">Engineer</option>
+                    <option value="analyst">Analyst</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="favorite_tools">Multiple List Box (Favorite Tools):</label>
+                <select id="favorite_tools" name="favorite_tools[]" multiple size="3">
+                    <option value="jupyter">Jupyter Notebook</option>
+                    <option value="vscode">VS Code</option>
+                    <option value="tableau">Tableau</option>
+                    <option value="powerbi">Power BI</option>
+                </select>
+                <small>Hold Ctrl (or Cmd on Mac) to select multiple options.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password Field:</label>
+                <input type="password" id="password" name="password">
+            </div>
+
+            <button type="submit">Submit</button>
+            <button type="reset">Reset</button>
+        </form>
+    </div>
+</body>
+</html>

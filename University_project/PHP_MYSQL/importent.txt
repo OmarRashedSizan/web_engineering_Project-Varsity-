@@ -1,0 +1,336 @@
+ Design a form that contains "Text Fields", "Text Area", "Check Boxes", "Multiple Checkboxes",
+
+"Radio Buttons", "List Boxes", "Password Fields", "Submit Button", "Reset Button", and store the
+
+values of this form into a MySQL database and show the stored information on another page
+
+using a PHP program.
+
+
+
+Alright, let's design that HTML form and outline the PHP scripts to store the data in a MySQL database and display it on another page.
+
+1. HTML Form (index.html):
+
+HTML
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Entry Form</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="checkbox"],
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button[type="reset"] {
+            background-color: #6c757d;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Data Entry Form</h2>
+        <form action="process_form.php" method="post">
+            <div class="form-group">
+                <label for="name">Text Field:</label>
+                <input type="text" id="name" name="name">
+            </div>
+
+            <div class="form-group">
+                <label for="comments">Text Area:</label>
+                <textarea id="comments" name="comments" rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Check Boxes:</label><br>
+                <input type="checkbox" id="agree" name="agree" value="yes">
+                <label for="agree">I agree to the terms</label><br>
+            </div>
+
+            <div class="form-group">
+                <label>Multiple Checkboxes (Skills):</label><br>
+                <input type="checkbox" id="skill1" name="skills[]" value="Python">
+                <label for="skill1">Python</label><br>
+                <input type="checkbox" id="skill2" name="skills[]" value="SQL">
+                <label for="skill2">SQL</label><br>
+                <input type="checkbox" id="skill3" name="skills[]" value="R">
+                <label for="skill3">R</label><br>
+            </div>
+
+            <div class="form-group">
+                <label>Radio Buttons (Gender):</label><br>
+                <input type="radio" id="male" name="gender" value="male">
+                <label for="male">Male</label><br>
+                <input type="radio" id="female" name="gender" value="female">
+                <label for="female">Female</label><br>
+                <input type="radio" id="other" name="gender" value="other">
+                <label for="other">Other</label><br>
+            </div>
+
+            <div class="form-group">
+                <label for="occupation">List Box (Occupation):</label>
+                <select id="occupation" name="occupation">
+                    <option value="">Select...</option>
+                    <option value="student">Student</option>
+                    <option value="engineer">Engineer</option>
+                    <option value="analyst">Analyst</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="favorite_tools">Multiple List Box (Favorite Tools):</label>
+                <select id="favorite_tools" name="favorite_tools[]" multiple size="3">
+                    <option value="jupyter">Jupyter Notebook</option>
+                    <option value="vscode">VS Code</option>
+                    <option value="tableau">Tableau</option>
+                    <option value="powerbi">Power BI</option>
+                </select>
+                <small>Hold Ctrl (or Cmd on Mac) to select multiple options.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password Field:</label>
+                <input type="password" id="password" name="password">
+            </div>
+
+            <button type="submit">Submit</button>
+            <button type="reset">Reset</button>
+        </form>
+    </div>
+</body>
+</html>
+2. PHP Script to Process Form and Store in MySQL (process_form.php):
+
+PHP
+
+<?php
+// Database credentials
+$servername = "localhost"; // Replace with your server name
+$username = "your_username"; // Replace with your MySQL username
+$password = "your_password"; // Replace with your MySQL password
+$dbname = "your_database";   // Replace with your MySQL database name
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Sanitize and retrieve form data
+$name = isset($_POST['name']) ? mysqli_real_escape_string($conn, $_POST['name']) : '';
+$comments = isset($_POST['comments']) ? mysqli_real_escape_escape_string($conn, $_POST['comments']) : '';
+$agree = isset($_POST['agree']) ? mysqli_real_escape_string($conn, $_POST['agree']) : 'no';
+$gender = isset($_POST['gender']) ? mysqli_real_escape_string($conn, $_POST['gender']) : '';
+$occupation = isset($_POST['occupation']) ? mysqli_real_escape_string($conn, $_POST['occupation']) : '';
+$password = isset($_POST['password']) ? password_hash($_POST['password'], PASSWORD_DEFAULT) : ''; // Hash the password
+
+// Handle multiple checkboxes (skills)
+$skills = isset($_POST['skills']) ? implode(", ", array_map(function($skill) use ($conn) {
+    return mysqli_real_escape_string($conn, $skill);
+}, $_POST['skills'])) : '';
+
+// Handle multiple list box (favorite tools)
+$favorite_tools = isset($_POST['favorite_tools']) ? implode(", ", array_map(function($tool) use ($conn) {
+    return mysqli_real_escape_string($conn, $tool);
+}, $_POST['favorite_tools'])) : '';
+
+// SQL query to insert data
+$sql = "INSERT INTO form_data (name, comments, agreed, skills, gender, occupation, favorite_tools, password)
+        VALUES ('$name', '$comments', '$agree', '$skills', '$gender', '$occupation', '$favorite_tools', '$password')";
+
+if ($conn->query($sql) === TRUE) {
+    echo "New record created successfully. <a href='display_data.php'>View Data</a>";
+} else {
+    echo "Error: " . $sql . "<br>" . $conn->error;
+}
+
+$conn->close();
+?>
+3. PHP Script to Display Stored Data (display_data.php):
+
+PHP
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stored Form Data</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+        .data-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .data-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .data-item strong {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="data-container">
+        <h2>Stored Form Data</h2>
+        <?php
+        // Database credentials
+        $servername = "localhost"; // Replace with your server name
+        $username = "your_username"; // Replace with your MySQL username
+        $password = "your_password"; // Replace with your MySQL password
+        $dbname = "your_database";   // Replace with your MySQL database name
+
+        // Create connection
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // SQL query to retrieve data
+        $sql = "SELECT * FROM form_data";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            // Output data of each row
+            while($row = $result->fetch_assoc()) {
+                echo "<div class='data-item'>";
+                echo "<strong>ID:</strong> " . $row["id"] . "<br>";
+                echo "<strong>Name:</strong> " . $row["name"] . "<br>";
+                echo "<strong>Comments:</strong> " . $row["comments"] . "<br>";
+                echo "<strong>Agreed:</strong> " . $row["agreed"] . "<br>";
+                echo "<strong>Skills:</strong> " . $row["skills"] . "<br>";
+                echo "<strong>Gender:</strong> " . $row["gender"] . "<br>";
+                echo "<strong>Occupation:</strong> " . $row["occupation"] . "<br>";
+                echo "<strong>Favorite Tools:</strong> " . $row["favorite_tools"] . "<br>";
+                echo "</div>";
+            }
+        } else {
+            echo "No data found.";
+        }
+        $conn->close();
+        ?>
+        <p><a href="index.html">Go back to the form</a></p>
+    </div>
+</body>
+</html>
+Before Running:
+
+MySQL Database:
+
+Make sure you have a MySQL database set up.
+Create a table named form_data with the following structure (adjust data types and lengths as needed):
+SQL
+
+CREATE TABLE form_data (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    comments TEXT,
+    agreed VARCHAR(3),
+    skills VARCHAR(255),
+    gender VARCHAR(50),
+    occupation VARCHAR(100),
+    favorite_tools VARCHAR(255),
+    password VARCHAR(255),
+    submission_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+Database Credentials:
+
+In both process_form.php and display_data.php, replace the placeholder values for $servername, $username, $password, and $dbname with your actual MySQL database credentials.
+PHP Environment:
+
+Ensure you have a PHP environment set up (e.g., using XAMPP, WAMP, MAMP, or a similar local development server).
+Place the index.html, process_form.php, and display_data.php files in the appropriate directory for your web server (usually htdocs in XAMPP, www in MAMP, etc.).
+How it Works:
+
+index.html: Presents the HTML form with all the specified input types. The action attribute of the <form> tag is set to process_form.php, and the method is post, so the form data will be sent to process_form.php when the "Submit" button is clicked.
+
+process_form.php:
+
+Establishes a connection to the MySQL database.
+Retrieves the data submitted through the form using the $_POST superglobal array.
+Crucially, it sanitizes the input data using mysqli_real_escape_string() to prevent SQL injection vulnerabilities.
+For the "Multiple Checkboxes" and "Multiple List Box", it uses implode() to convert the array of selected values into a comma-separated string for storage in the database.
+It hashes the password using password_hash() for security. Never store plain-text passwords.
+Constructs an SQL INSERT query to add the submitted data into the form_data table.
+Executes the query using $conn->query().
+Displays a success or error message and provides a link to display_data.php to view the stored information.
+Closes the database connection.
+display_data.php:
+
+Establishes a connection to the MySQL database.
+Constructs an SQL SELECT query to retrieve all data from the form_data table.
+Executes the query and fetches the results.
+If there are rows in the result set, it iterates through each row using $result->fetch_assoc() and displays the data in a formatted manner.
+If no data is found, it displays a "No data found." message.
+Provides a link back to the index.html form.
+Closes the database connection.
+Remember to replace the database credentials and ensure your MySQL server and database are correctly configured for this to work.

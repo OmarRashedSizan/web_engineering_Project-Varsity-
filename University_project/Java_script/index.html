@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Manipulation Events</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        .interactive-element {
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .highlight {
+            background-color: yellow;
+        }
+        .blue-text {
+            color: blue;
+        }
+        #new-paragraph {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px dashed green;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>DOM Manipulation with Events</h1>
+
+    <div id="textChanger" class="interactive-element">Click me to change my text!</div>
+
+    <div id="colorChanger" class="interactive-element">Mouse over me to change my background color.</div>
+
+    <p id="removeMe" class="interactive-element">Double-click me to remove this paragraph.</p>
+
+    <div id="insertionPoint"></div>
+    <button id="insertButton">Click to insert a new paragraph below.</button>
+
+    <script>
+        // Function to change the text of an element
+        function changeText() {
+            const textChanger = document.getElementById('textChanger');
+            textChanger.textContent = 'Text has been changed!';
+        }
+
+        // Function to change the background color of an element on mouseover
+        function changeColor() {
+            const colorChanger = document.getElementById('colorChanger');
+            colorChanger.classList.add('highlight');
+        }
+
+        // Function to revert the background color on mouseout
+        function revertColor() {
+            const colorChanger = document.getElementById('colorChanger');
+            colorChanger.classList.remove('highlight');
+        }
+
+        // Function to remove an element
+        function removeElement() {
+            const elementToRemove = document.getElementById('removeMe');
+            if (elementToRemove) {
+                elementToRemove.remove();
+                alert('The paragraph has been removed!');
+            }
+        }
+
+        // Function to insert a new paragraph
+        function insertNewParagraph() {
+            const insertionPoint = document.getElementById('insertionPoint');
+            const newParagraph = document.createElement('p');
+            newParagraph.id = 'new-paragraph';
+            newParagraph.textContent = 'This is a newly inserted paragraph!';
+            insertionPoint.appendChild(newParagraph);
+        }
+
+        // Event listeners
+        document.getElementById('textChanger').addEventListener('click', changeText);
+        document.getElementById('colorChanger').addEventListener('mouseover', changeColor);
+        document.getElementById('colorChanger').addEventListener('mouseout', revertColor);
+        document.getElementById('removeMe').addEventListener('dblclick', removeElement);
+        document.getElementById('insertButton').addEventListener('click', insertNewParagraph);
+
+    </script>
+
+</body>
+</html>
